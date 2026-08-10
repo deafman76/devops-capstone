@@ -20,6 +20,6 @@ resource "aws_security_group" "web" {
   }
 
   tags = {
-    Name = "devops-capstone-sg"
+    Name = "bootcamp-sg"
   }
 }
