@@ -1,15 +1,7 @@
 resource "aws_security_group" "web" {
-  name        = "devops-capstone-sg"
-  description = "Security group for DevOps capstone EC2"
+  name        = "bootcamp-sg"
+  description = "Security group for bootcamp EC2"
   vpc_id      = aws_vpc.main.id
-
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.admin_cidr]
-  }
 
   ingress {
     description = "HTTP"
