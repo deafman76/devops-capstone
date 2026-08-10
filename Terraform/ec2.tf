@@ -18,7 +18,7 @@ resource "aws_instance" "web" {
   }
 
   tags = {
-    Name        = "devops-capstone-web"
+    Name        = "bootcamp-web"
     Environment = "dev"
     ManagedBy   = "Terraform"
   }
