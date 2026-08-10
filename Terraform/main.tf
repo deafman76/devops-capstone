@@ -8,7 +8,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "devops-capstone-vpc"
+    Name = "bootcamp-vpc"
   }
 }
 
@@ -19,7 +19,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "devops-capstone-public-subnet"
+    Name = "bootcamp-public-subnet"
   }
 }
 
@@ -27,7 +27,7 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "devops-capstone-igw"
+    Name = "bootcamp-igw"
   }
 }
 
@@ -40,7 +40,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "devops-capstone-public-rt"
+    Name = "bootcamp-public-rt"
   }
 }
 
