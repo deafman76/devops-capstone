@@ -4,16 +4,19 @@ variable "aws_region" {
   default     = "eu-west-1"
 }
 
-variable "vpc_cidr" {
-  description = "VPC CIDR"
+variable "subnet_id" {
+  description = "Existing subnet ID"
   type        = string
-  default     = "10.0.0.0/16"
 }
 
-variable "public_subnet_cidr" {
-  description = "Public subnet CIDR"
+variable "security_group_id" {
+  description = "Existing security group ID"
   type        = string
-  default     = "10.0.1.0/24"
+}
+
+variable "ami_id" {
+  description = "EC2 AMI ID"
+  type        = string
 }
 
 variable "instance_type" {
@@ -22,3 +25,7 @@ variable "instance_type" {
   default     = "t3.micro"
 }
 
+variable "bucket_name" {
+  description = "Globally unique S3 bucket name"
+  type        = string
+}
