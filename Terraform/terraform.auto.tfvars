@@ -1,1 +1,6 @@
-aws_region          = "eu-west-1"
+aws_region        = "eu-west-1"
+subnet_id         = "subnet-09499899162c048f7"
+security_group_id = "sg-020beeecdaeb183ab"
+ami_id            = "ami-032490a2400c9afb6"
+instance_type     = "t3.medium"
+bucket_name       = "bootcamp-eu-west-1-project-s3-bucket-1"
