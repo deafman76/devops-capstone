@@ -26,8 +26,3 @@ variable "key_name" {
   description = "Existing EC2 key pair name"
   type        = string
 }
-
-variable "admin_cidr" {
-  description = "CIDR allowed to SSH to EC2"
-  type        = string
-}
