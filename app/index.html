@@ -1,0 +1,408 @@
+cat > app/index.html <<'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Capstone — Team Presentation</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background: #f4f6f8;
+            color: #17202a;
+        }
+
+        header {
+            background: #17202a;
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 18px;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: white;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        nav a {
+            margin: 0 8px;
+            color: #17202a;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        section {
+            background: white;
+            margin: 25px 0;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .card {
+            padding: 20px;
+            background: #f4f6f8;
+            border-radius: 8px;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #17202a;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .status {
+            font-size: 18px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #555;
+        }
+
+        .architecture-placeholder {
+            border: 2px dashed #999;
+            padding: 40px;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>DevOps Bootcamp Capstone</h1>
+    <p>Team Presentation — Application, Docker, AWS, CI/CD and Deployment</p>
+    <p>Week: <strong>__VERSION__</strong></p>
+</header>
+
+<nav>
+    <a href="#objective">Objective</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#team">Team</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#bonuses">Bonuses</a>
+    <a href="#ai">AI Usage</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#status">Live Status</a>
+</nav>
+
+<main>
+
+<section id="objective">
+    <h2>1. Objective &amp; Constraints</h2>
+
+    <p>
+        This project demonstrates the team's DevOps bootcamp work using
+        containerization, infrastructure automation, CI/CD and cloud deployment.
+    </p>
+
+    <ul>
+        <li>Docker Hub is banned.</li>
+        <li>The web application is the team's presentation.</li>
+        <li>The application must not run directly on EC2.</li>
+        <li>The application is designed for managed container deployment.</li>
+        <li>The team attempts the required bonus challenges.</li>
+    </ul>
+</section>
+
+<section id="architecture">
+    <h2>2. Architecture</h2>
+
+    <p>
+        The presentation application is packaged as a Docker image and intended
+        for deployment through Amazon ECR and Amazon ECS/Fargate.
+    </p>
+
+    <pre>
+Presentation SPA
+      |
+      v
+Application Docker Image
+      |
+      v
+Amazon ECR
+      |
+      v
+ECS / AWS Fargate
+      |
+      +---- BLUE
+      |
+      +---- GREEN
+      |
+      v
+NGINX Reverse Proxy
+      |
+      v
+Application Load Balancer
+      |
+      v
+Public Browser
+    </pre>
+
+    <div class="architecture-placeholder">
+        <strong>Architecture diagram</strong>
+        <p>
+            TM3's exported draw.io architecture PNG will be embedded here.
+        </p>
+        <p>
+            File expected:
+            <code>app/assets/architecture.png</code>
+        </p>
+    </div>
+</section>
+
+<section id="team">
+    <h2>3. What Each Member Did</h2>
+
+    <div class="card-grid">
+
+        <div class="card">
+            <h3>Team Member 1</h3>
+            <p>
+                Presentation web application, Docker image, NGINX application
+                configuration and reverse-proxy image.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Team Member 2</h3>
+            <p>
+                AWS infrastructure, Terraform and cloud resources.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Team Member 3</h3>
+            <p>
+                Ansible/server work and architecture documentation.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Team Member 4</h3>
+            <p>
+                Jenkins CI/CD automation and deployment pipeline.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<section id="pipeline">
+    <h2>4. Pipeline Walkthrough</h2>
+
+    <ol>
+        <li>Developer pushes code to Git.</li>
+        <li>Jenkins obtains the source code.</li>
+        <li>The application Docker image is built.</li>
+        <li>Container health is tested.</li>
+        <li>The image is pushed to Amazon ECR.</li>
+        <li>GREEN deployment is started.</li>
+        <li>GREEN health is validated.</li>
+        <li>If GREEN succeeds, traffic can be switched.</li>
+        <li>If GREEN fails, BLUE remains active.</li>
+    </ol>
+
+    <p>
+        Build metadata is represented by:
+    </p>
+
+    <pre>
+Version: __VERSION__
+Git Commit: __GIT_COMMIT__
+Build Number: __BUILD_NUMBER__
+Color: __COLOR__
+    </pre>
+</section>
+
+<section id="bonuses">
+    <h2>5. Bonus Challenges</h2>
+
+    <table width="100%" border="1" cellpadding="8">
+        <tr>
+            <th>Challenge</th>
+            <th>Status</th>
+            <th>Evidence</th>
+        </tr>
+        <tr>
+            <td>NGINX reverse proxy</td>
+            <td>Attempted</td>
+            <td>Proxy configuration / Jenkins evidence</td>
+        </tr>
+        <tr>
+            <td>Blue/green deployment</td>
+            <td>Attempted</td>
+            <td>GREEN health and traffic-switch evidence</td>
+        </tr>
+        <tr>
+            <td>Controlled failed release</td>
+            <td>Planned</td>
+            <td>Unhealthy GREEN test</td>
+        </tr>
+    </table>
+</section>
+
+<section id="ai">
+    <h2>6. AI Usage</h2>
+
+    <p>
+        AI was used as a development assistant for tasks such as understanding
+        DevOps requirements, preparing configuration examples, troubleshooting
+        commands and reviewing implementation details.
+    </p>
+
+    <p>
+        The complete AI-usage record will be maintained in:
+    </p>
+
+    <pre>docs/ai-usage/team-member-1.md</pre>
+
+    <p>
+        The final record must contain the AI platform, model/LLM, exact prompt,
+        output produced, review/adaptation and reason for using AI.
+    </p>
+</section>
+
+<section id="evidence">
+    <h2>7. Evidence</h2>
+
+    <ul>
+        <li>Application works locally.</li>
+        <li>Docker image builds successfully.</li>
+        <li><code>/health.html</code> returns <code>OK</code>.</li>
+        <li><code>/version.json</code> returns build metadata.</li>
+        <li>Docker container health check reports healthy.</li>
+        <li>Failed-release evidence will be added after the controlled test.</li>
+        <li>Deployment/teardown evidence will be added by the team.</li>
+    </ul>
+</section>
+
+<section id="status">
+    <h2>8. Live Status</h2>
+
+    <p>
+        The values below are populated from <code>/version.json</code>.
+    </p>
+
+    <div class="card-grid">
+        <div class="card">
+            <strong>Version</strong>
+            <div id="version">Loading...</div>
+        </div>
+
+        <div class="card">
+            <strong>Git Commit</strong>
+            <div id="gitCommit">Loading...</div>
+        </div>
+
+        <div class="card">
+            <strong>Build Number</strong>
+            <div id="buildNumber">Loading...</div>
+        </div>
+
+        <div class="card">
+            <strong>Active Color</strong>
+            <div id="color">Loading...</div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    DevOps Bootcamp Capstone — Team Presentation
+</footer>
+
+<script>
+async function loadVersion() {
+    try {
+        const response = await fetch('/version.json', {
+            cache: 'no-store'
+        });
+
+        const data = await response.json();
+
+        document.getElementById('version').textContent =
+            data.version || '__VERSION__';
+
+        document.getElementById('gitCommit').textContent =
+            data.gitCommit || '__GIT_COMMIT__';
+
+        document.getElementById('buildNumber').textContent =
+            data.buildNumber || '__BUILD_NUMBER__';
+
+        document.getElementById('color').textContent =
+            data.color || '__COLOR__';
+
+    } catch (error) {
+        document.getElementById('version').textContent = 'Unavailable';
+        document.getElementById('gitCommit').textContent = 'Unavailable';
+        document.getElementById('buildNumber').textContent = 'Unavailable';
+        document.getElementById('color').textContent = 'Unavailable';
+    }
+}
+
+loadVersion();
+</script>
+
+</body>
+</html>
+EOF
