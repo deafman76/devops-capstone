@@ -1,4 +1,4 @@
-cat > app/version.json <<'EOF'
+cat > version.json <<'EOF'
 {
   "version": "__VERSION__",
   "gitCommit": "__GIT_COMMIT__",
