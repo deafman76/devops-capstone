@@ -1,63 +1,37 @@
-cat > app/index.html <<'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Capstone — Team Presentation</title>
-
+    <title>DevOps Bootcamp Capstone</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            margin: 0;
             background: #f4f6f8;
-            color: #17202a;
+            color: #222;
+            line-height: 1.6;
         }
 
         header {
-            background: #17202a;
+            background: #1f2937;
             color: white;
-            padding: 50px 20px;
+            padding: 40px 20px;
             text-align: center;
-        }
-
-        header h1 {
-            font-size: 42px;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            font-size: 18px;
         }
 
         nav {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: white;
+            background: #111827;
             padding: 12px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
         }
 
         nav a {
-            margin: 0 8px;
-            color: #17202a;
+            color: white;
             text-decoration: none;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
+            margin: 0 10px;
         }
 
         main {
@@ -68,59 +42,61 @@ cat > app/index.html <<'EOF'
 
         section {
             background: white;
-            margin: 25px 0;
-            padding: 30px;
+            margin: 20px 0;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         h2 {
-            margin-top: 0;
+            color: #1f2937;
             border-bottom: 2px solid #ddd;
             padding-bottom: 8px;
         }
 
-        .card-grid {
+        .team {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 15px;
         }
 
         .card {
-            padding: 20px;
-            background: #f4f6f8;
+            border: 1px solid #ddd;
             border-radius: 8px;
-        }
-
-        code {
-            background: #eee;
-            padding: 2px 5px;
-            border-radius: 4px;
+            padding: 18px;
         }
 
         pre {
-            background: #17202a;
-            color: white;
+            background: #111827;
+            color: #f9fafb;
             padding: 15px;
             border-radius: 6px;
             overflow-x: auto;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #e5e7eb;
+        }
+
         .status {
-            font-size: 18px;
+            font-weight: bold;
         }
 
         footer {
             text-align: center;
             padding: 30px;
             color: #555;
-        }
-
-        .architecture-placeholder {
-            border: 2px dashed #999;
-            padding: 40px;
-            text-align: center;
-            margin-top: 15px;
         }
     </style>
 </head>
@@ -129,8 +105,8 @@ cat > app/index.html <<'EOF'
 
 <header>
     <h1>DevOps Bootcamp Capstone</h1>
-    <p>Team Presentation — Application, Docker, AWS, CI/CD and Deployment</p>
-    <p>Week: <strong>__VERSION__</strong></p>
+    <p>Team 3 — DevOps Project Presentation</p>
+    <p>Application, Docker, AWS, Ansible, CI/CD and Kubernetes</p>
 </header>
 
 <nav>
@@ -147,7 +123,7 @@ cat > app/index.html <<'EOF'
 <main>
 
 <section id="objective">
-    <h2>1. Objective &amp; Constraints</h2>
+    <h2>1. Objective & Constraints</h2>
 
     <p>
         This project demonstrates the team's DevOps bootcamp work using
@@ -197,22 +173,16 @@ Application Load Balancer
 Public Browser
     </pre>
 
-    <div class="architecture-placeholder">
-        <strong>Architecture diagram</strong>
-        <p>
-            TM3's exported draw.io architecture PNG will be embedded here.
-        </p>
-        <p>
-            File expected:
-            <code>app/assets/architecture.png</code>
-        </p>
-    </div>
+    <p>
+        The architecture documentation is maintained separately in the project
+        documentation.
+    </p>
 </section>
 
 <section id="team">
     <h2>3. What Each Member Did</h2>
 
-    <div class="card-grid">
+    <div class="team">
 
         <div class="card">
             <h3>Team Member 1</h3>
@@ -243,6 +213,13 @@ Public Browser
             </p>
         </div>
 
+        <div class="card">
+            <h3>Team Member 5</h3>
+            <p>
+                Kubernetes, quality activities and demonstration work.
+            </p>
+        </div>
+
     </div>
 </section>
 
@@ -261,41 +238,42 @@ Public Browser
         <li>If GREEN fails, BLUE remains active.</li>
     </ol>
 
-    <p>
-        Build metadata is represented by:
-    </p>
+    <h3>Build Metadata</h3>
 
     <pre>
 Version: __VERSION__
 Git Commit: __GIT_COMMIT__
 Build Number: __BUILD_NUMBER__
-Color: __COLOR__
+Deployment Slot: __DEPLOYMENT_SLOT__
     </pre>
 </section>
 
 <section id="bonuses">
     <h2>5. Bonus Challenges</h2>
 
-    <table width="100%" border="1" cellpadding="8">
+    <table>
         <tr>
             <th>Challenge</th>
             <th>Status</th>
             <th>Evidence</th>
         </tr>
+
         <tr>
             <td>NGINX reverse proxy</td>
             <td>Attempted</td>
-            <td>Proxy configuration / Jenkins evidence</td>
+            <td>NGINX configuration and Docker image</td>
         </tr>
+
         <tr>
             <td>Blue/green deployment</td>
             <td>Attempted</td>
-            <td>GREEN health and traffic-switch evidence</td>
+            <td>GREEN health and deployment evidence</td>
         </tr>
+
         <tr>
             <td>Controlled failed release</td>
-            <td>Planned</td>
-            <td>Unhealthy GREEN test</td>
+            <td>Tested</td>
+            <td>Unhealthy GREEN release test</td>
         </tr>
     </table>
 </section>
@@ -304,20 +282,19 @@ Color: __COLOR__
     <h2>6. AI Usage</h2>
 
     <p>
-        AI was used as a development assistant for tasks such as understanding
-        DevOps requirements, preparing configuration examples, troubleshooting
+        AI was used as a development assistant for understanding DevOps
+        requirements, preparing configuration examples, troubleshooting
         commands and reviewing implementation details.
     </p>
 
     <p>
-        The complete AI-usage record will be maintained in:
+        AI-generated suggestions were reviewed and adapted before being used
+        in the project.
     </p>
 
-    <pre>docs/ai-usage/team-member-1.md</pre>
-
     <p>
-        The final record must contain the AI platform, model/LLM, exact prompt,
-        output produced, review/adaptation and reason for using AI.
+        The detailed AI-usage record should be maintained in the project
+        documentation.
     </p>
 </section>
 
@@ -328,10 +305,10 @@ Color: __COLOR__
         <li>Application works locally.</li>
         <li>Docker image builds successfully.</li>
         <li><code>/health.html</code> returns <code>OK</code>.</li>
-        <li><code>/version.json</code> returns build metadata.</li>
+        <li><code>/version.json</code> provides application metadata.</li>
         <li>Docker container health check reports healthy.</li>
-        <li>Failed-release evidence will be added after the controlled test.</li>
-        <li>Deployment/teardown evidence will be added by the team.</li>
+        <li>A controlled unhealthy GREEN release was tested.</li>
+        <li>Deployment and teardown evidence can be demonstrated by the team.</li>
     </ul>
 </section>
 
@@ -342,65 +319,44 @@ Color: __COLOR__
         The values below are populated from <code>/version.json</code>.
     </p>
 
-    <div class="card-grid">
-        <div class="card">
-            <strong>Version</strong>
-            <div id="version">Loading...</div>
-        </div>
+    <p><strong>Version:</strong> <span id="version">Loading...</span></p>
+    <p><strong>Git Commit:</strong> <span id="gitCommit">Loading...</span></p>
+    <p><strong>Build Number:</strong> <span id="buildNumber">Loading...</span></p>
+    <p><strong>Deployment Slot:</strong> <span id="deploymentSlot">Loading...</span></p>
 
-        <div class="card">
-            <strong>Git Commit</strong>
-            <div id="gitCommit">Loading...</div>
-        </div>
-
-        <div class="card">
-            <strong>Build Number</strong>
-            <div id="buildNumber">Loading...</div>
-        </div>
-
-        <div class="card">
-            <strong>Active Color</strong>
-            <div id="color">Loading...</div>
-        </div>
-    </div>
+    <p class="status" id="statusMessage">Loading application metadata...</p>
 </section>
 
 </main>
 
 <footer>
-    DevOps Bootcamp Capstone — Team Presentation
+    DevOps Bootcamp Capstone — Team 3
 </footer>
 
 <script>
-async function loadVersion() {
-    try {
-        const response = await fetch('/version.json', {
-            cache: 'no-store'
-        });
-
-        const data = await response.json();
-
+fetch('/version.json')
+    .then(response => response.json())
+    .then(data => {
         document.getElementById('version').textContent =
-            data.version || '__VERSION__';
+            data.version || 'N/A';
 
         document.getElementById('gitCommit').textContent =
-            data.gitCommit || '__GIT_COMMIT__';
+            data.gitCommit || 'N/A';
 
         document.getElementById('buildNumber').textContent =
-            data.buildNumber || '__BUILD_NUMBER__';
+            data.buildNumber || 'N/A';
 
-        document.getElementById('color').textContent =
-            data.color || '__COLOR__';
+        document.getElementById('deploymentSlot').textContent =
+            data.deploymentSlot || 'N/A';
 
-    } catch (error) {
-        document.getElementById('version').textContent = 'Unavailable';
-        document.getElementById('gitCommit').textContent = 'Unavailable';
-        document.getElementById('buildNumber').textContent = 'Unavailable';
-        document.getElementById('color').textContent = 'Unavailable';
-    }
-}
-
-loadVersion();
+        document.getElementById('statusMessage').textContent =
+            'Application metadata loaded successfully.';
+    })
+    .catch(error => {
+        document.getElementById('statusMessage').textContent =
+            'Unable to load application metadata.';
+        console.error(error);
+    });
 </script>
 
 </body>
