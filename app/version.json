@@ -1,8 +1,6 @@
-cat > app/version.json <<'EOF'
 {
   "version": "__VERSION__",
   "gitCommit": "__GIT_COMMIT__",
   "buildNumber": "__BUILD_NUMBER__",
   "color": "__COLOR__"
 }
-EOF

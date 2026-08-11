@@ -1,1 +1,10 @@
 .vs/
+
+# Local Terraform state and provider cache
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Local AWS credentials and configuration
+**/.aws/
+~/
