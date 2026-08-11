@@ -15,7 +15,7 @@ resource "aws_instance" "web" {
   }
 
   tags = {
-    Name        = "bootcamp-ec2"
+    Name        = "bootcamp-ec2-team3"
     Environment = "dev"
     ManagedBy   = "Terraform"
   }
