@@ -7,4 +7,8 @@ terraform/*.tfstate.*
 
 # Local AWS credentials and configuration
 **/.aws/
+
+# Generated CI build context and deployment evidence
+.build/
+evidence/
 ~/

@@ -1,0 +1,32 @@
+{
+  "family": "${ECS_TASK_FAMILY_APP}",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "${APP_IMAGE_URI}",
+      "essential": true,
+      "portMappings": [{"containerPort": 8080, "protocol": "tcp"}],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -q -O - http://127.0.0.1:8080/health.html | grep -qx OK || exit 1"],
+        "interval": 10,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 10
+      },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${LOG_GROUP_APP}",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "app"
+        }
+      }
+    }
+  ]
+}

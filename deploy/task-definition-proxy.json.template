@@ -1,0 +1,26 @@
+{
+  "family": "${ECS_TASK_FAMILY_PROXY}",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "${EXECUTION_ROLE_ARN}",
+  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "containerDefinitions": [
+    {
+      "name": "nginx-proxy",
+      "image": "${PROXY_IMAGE_URI}",
+      "essential": true,
+      "portMappings": [{"containerPort": 80, "protocol": "tcp"}],
+      "environment": [{"name": "APP_UPSTREAM", "value": "${APP_UPSTREAM}"}],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${LOG_GROUP_PROXY}",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "proxy"
+        }
+      }
+    }
+  ]
+}
