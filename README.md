@@ -1,2 +1,2 @@
-# devops-capstone
-Devops bootcamp final project
+# bootcamp-project
+DevOps Bootcamp Capstone Task
