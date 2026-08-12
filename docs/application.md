@@ -1,4 +1,3 @@
-cat > application.md <<'EOF'
 # Application Runtime Contract
 
 ## Team Member 1 — Presentation Web App
