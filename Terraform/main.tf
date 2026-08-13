@@ -101,6 +101,42 @@ resource "aws_ecr_repository" "app" {
 }
 
 
+# ============================================================
+# ECS / FARGATE SECURITY GROUP
+# ============================================================
+
+resource "aws_security_group" "ecs" {
+  name        = "bootcamp-ecs-sg"
+  description = "Security group for ECS Fargate application"
+  vpc_id      = var.vpc_id
+
+  # Application port only
+  ingress {
+    description = "Allow application traffic on port 80"
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow Fargate to reach ECR, CloudWatch, internet, etc.
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "bootcamp-ecs-sg"
+    Environment = "dev"
+    ManagedBy   = "Terraform"
+    Project     = "bootcamp-automation"
+  }
+}
+
+
 # ECS CLUSTER=====================================================
 
 
@@ -181,10 +217,10 @@ resource "aws_ecs_service" "app" {
   network_configuration {
     subnets = var.subnet_ids
 
-    security_groups = [
-      var.security_group_id
-    ]
 
+security_groups = [
+  aws_security_group.ecs.id
+]
     assign_public_ip = true
   }
 
