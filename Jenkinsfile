@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = credentials ? 'eu-west-1' : 'eu-west-1'
+        AWS_REGION = 'eu-west-1'
         COLOR = 'green'
         APP_PORT = '8080'
         APP_HEALTH_PATH = '/health.html'
