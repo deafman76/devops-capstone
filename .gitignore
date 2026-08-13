@@ -48,6 +48,8 @@ terraform.rc
 
 # Local Terraform plans and inventory artifacts
 
-.tfplan
+*.tfplan
 
 terraform/existing-jenkins-ec2.json
+terraform.zip
+terraform-state-*.json

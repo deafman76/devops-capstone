@@ -155,6 +155,7 @@ resource "aws_ecs_cluster" "app" {
 
 
 resource "aws_ecs_task_definition" "app" {
+  skip_destroy             = true
   family                   = var.ecs_task_family
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
