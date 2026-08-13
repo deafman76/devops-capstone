@@ -10,7 +10,7 @@ pipeline {
         ALB_URL = 'https://placeholder-alb.example.com'
         APP_SERVICE_GREEN = 'app-green'
         PROXY_SERVICE = 'nginx-proxy'
-        ECR_APP_REPO = 'placeholder-app-repo'
+        ECR_APP_REPO = '597765856364.dkr.ecr.eu-west-1.amazonaws.com/bootcamp-app-team3'
         ECR_PROXY_REPO = 'placeholder-proxy-repo'
     }
 

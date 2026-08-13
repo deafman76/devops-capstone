@@ -44,3 +44,10 @@ terraform.rc
 # planout
 
 .vs/
+
+
+# Local Terraform plans and inventory artifacts
+
+.tfplan
+
+terraform/existing-jenkins-ec2.json
