@@ -26,6 +26,35 @@ resource "aws_security_group" "jenkins" {
   }
 }
 
+resource "aws_security_group" "ecs" {
+  name        = "bootcamp-project-team3-ecs-sg"
+  description = "Security group for ECS Fargate application"
+  vpc_id      = data.aws_subnet.selected.vpc_id
+
+  ingress {
+    description = "Allow application traffic"
+    from_port   = var.container_port
+    to_port     = var.container_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name        = "bootcamp-project-team3-ecs-sg"
+    Environment = "dev"
+    ManagedBy   = "Terraform"
+    Project     = "bootcamp-automation"
+  }
+}
+
 resource "aws_instance" "jenkins" {
   ami           = data.aws_ssm_parameter.al2023_ami.value
   instance_type = var.instance_type
@@ -94,42 +123,6 @@ resource "aws_ecr_repository" "app" {
 
   tags = {
     Name        = var.ecr_repository_name
-    Environment = "dev"
-    ManagedBy   = "Terraform"
-    Project     = "bootcamp-automation"
-  }
-}
-
-
-# ============================================================
-# ECS / FARGATE SECURITY GROUP
-# ============================================================
-
-resource "aws_security_group" "ecs" {
-  name        = "bootcamp-ecs-sg"
-  description = "Security group for ECS Fargate application"
-  vpc_id      = var.vpc_id
-
-  # Application port only
-  ingress {
-    description = "Allow application traffic on port 80"
-    from_port   = var.container_port
-    to_port     = var.container_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Allow Fargate to reach ECR, CloudWatch, internet, etc.
-  egress {
-    description = "Allow all outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name        = "bootcamp-ecs-sg"
     Environment = "dev"
     ManagedBy   = "Terraform"
     Project     = "bootcamp-automation"
@@ -218,9 +211,9 @@ resource "aws_ecs_service" "app" {
     subnets = var.subnet_ids
 
 
-security_groups = [
-  aws_security_group.ecs.id
-]
+    security_groups = [
+      aws_security_group.ecs.id
+    ]
     assign_public_ip = true
   }
 

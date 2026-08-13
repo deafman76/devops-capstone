@@ -22,4 +22,7 @@ ecs_desired_count = 2
 # Existing AWS IAM role
 ecs_task_execution_role_arn = "arn:aws:iam::597765856364:role/ecsTaskExecutionRole"
 
-vpc_id = "vpc-04b6091923e283784"
+subnet_ids = [
+  "subnet-09499899162c048f7",
+  "subnet-0085786c1374a372c"
+]
