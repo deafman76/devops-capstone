@@ -3,11 +3,12 @@ pipeline {
 
     environment {
         AWS_REGION = 'eu-west-1'
+        DEPLOY_ENABLED = 'false'
         COLOR = 'green'
         APP_PORT = '8080'
         APP_HEALTH_PATH = '/health.html'
         APP_VERSION_PATH = '/version.json'
-        ALB_URL = 'https://placeholder-alb.example.com'
+        ALB_URL = ''
         APP_SERVICE_GREEN = 'app-green'
         PROXY_SERVICE = 'nginx-proxy'
         ECR_APP_REPO = '597765856364.dkr.ecr.eu-west-1.amazonaws.com/bootcamp-app-team3'
@@ -77,30 +78,45 @@ pipeline {
         }
 
         stage('Deploy Green') {
+            when {
+                expression { env.DEPLOY_ENABLED == 'true' }
+                }
             steps {
                 sh 'bash scripts/deploy-green.sh'
             }
         }
 
         stage('Health Check Green') {
+            when {
+                expression { env.DEPLOY_ENABLED == 'true' }
+                }
             steps {
                 sh 'bash scripts/health-check.sh'
             }
         }
 
         stage('Switch Proxy') {
+            when {
+                expression { env.DEPLOY_ENABLED == 'true' }
+                }
             steps {
                 sh 'bash scripts/switch-proxy.sh'
             }
         }
 
         stage('Smoke Test') {
+            when {
+                expression { env.DEPLOY_ENABLED == 'true' }
+                }
             steps {
                 sh 'bash scripts/smoke-test.sh'
             }
         }
 
         stage('Scale Down Blue') {
+            when {
+                expression { env.DEPLOY_ENABLED == 'true' }
+                }
             steps {
                 sh 'bash scripts/scale-down-blue.sh'
             }
@@ -119,10 +135,10 @@ pipeline {
             echo 'Pipeline finished.'
         }
         success {
-            echo "Deployment successful: ${env.BUILD_TAG}"
+            echo "CI and ECR publication successful: ${env.BUILD_TAG}. ECS deployment enabled: ${env.DEPLOY_ENABLED}"
         }
         failure {
-            echo "Pipeline failed for build ${env.BUILD_TAG}. Blue remains live; no proxy switch should occur on failure."
+            echo "Pipeline failed for build ${env.BUILD_TAG}. The existing ECS service was not changed unless the deployment stage had started."
         }
     }
 }
