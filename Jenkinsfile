@@ -66,15 +66,7 @@ pipeline {
 
         stage('Push to ECR') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'aws-ci-credentials',
-                        usernameVariable: 'AWS_ACCESS_KEY_ID',
-                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-                    )
-                ]) {
-                    sh 'bash scripts/push-ecr.sh'
-                }
+                sh 'bash scripts/push-ecr.sh'
             }
         }
 
