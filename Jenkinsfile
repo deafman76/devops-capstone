@@ -64,6 +64,12 @@ pipeline {
             }
         }
 
+        stage('Verify AWS Identity') {
+            steps {
+                sh 'aws sts get-caller-identity --region eu-west-1'
+            }
+        }
+
         stage('Push to ECR') {
             steps {
                 sh 'bash scripts/push-ecr.sh'
