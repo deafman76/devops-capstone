@@ -212,10 +212,7 @@
         <li>The application Docker image is built.</li>
         <li>Container health is tested.</li>
         <li>The image is pushed to Amazon ECR.</li>
-        <li>GREEN deployment is started.</li>
-        <li>GREEN health is validated.</li>
-        <li>If GREEN succeeds, traffic can be switched.</li>
-        <li>If GREEN fails, BLUE remains active.</li>
+        <li>ECS/Fargate pulls the image from ECR and runs the application container.</li>
     </ol>
 
     <h3>Build Metadata</h3>
@@ -246,7 +243,7 @@ Deployment Slot: __DEPLOYMENT_SLOT__
 
         <tr>
             <td>Blue/green deployment</td>
-            <td>Attempted</td>
+            <td>Failed</td>
             <td>GREEN health and deployment evidence</td>
         </tr>
 
