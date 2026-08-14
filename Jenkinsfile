@@ -12,7 +12,7 @@ pipeline {
         APP_HEALTH_PATH = '/health.html'
         APP_VERSION_PATH = '/version.json'
 
-        ECR_APP_REPO = '597765856364.dkr.ecr.eu-west-1.amazonaws.com/bootcamp-app-team3'
+        ECR_APP_REPO = 'accid.dkr.ecr.eu-west-1.amazonaws.com/bootcamp-app-team3'
     }
 
     options {
