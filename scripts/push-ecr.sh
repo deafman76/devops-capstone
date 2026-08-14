@@ -14,7 +14,7 @@ set -euo pipefail
 
 AWS_REGION="${AWS_REGION:-eu-west-1}"
 
-AWS_ACCOUNT_ID="${AWS_ACCOUNT_ID:-597765856364}"
+AWS_ACCOUNT_ID="${AWS_ACCOUNT_ID:-accid}"
 
 ECR_REPOSITORY="${ECR_REPOSITORY:-bootcamp-app-team3}"
 
