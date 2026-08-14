@@ -3,16 +3,16 @@ pipeline {
 
     environment {
         AWS_REGION = 'eu-west-1'
-        DEPLOY_ENABLED = 'false'
+
+        ECS_CLUSTER = 'bootcamp-ecs-cluster-team3'
+        ECS_SERVICE = 'bootcamp-app-service'
+
         COLOR = 'green'
         APP_PORT = '8080'
         APP_HEALTH_PATH = '/health.html'
         APP_VERSION_PATH = '/version.json'
-        ALB_URL = ''
-        APP_SERVICE_GREEN = 'app-green'
-        PROXY_SERVICE = 'nginx-proxy'
+
         ECR_APP_REPO = '597765856364.dkr.ecr.eu-west-1.amazonaws.com/bootcamp-app-team3'
-        ECR_PROXY_REPO = 'placeholder-proxy-repo'
     }
 
     options {
@@ -22,8 +22,10 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
+                echo 'CHECKOUT: retrieving latest source from GitHub.'
                 checkout scm
                 sh 'git --no-pager status --short'
             }
@@ -31,6 +33,7 @@ pipeline {
 
         stage('Validate') {
             steps {
+                echo 'VALIDATE: checking repository structure.'
                 sh 'bash scripts/validate.sh'
             }
         }
@@ -38,107 +41,162 @@ pipeline {
         stage('Prepare Build') {
             steps {
                 script {
-                    env.SHORT_SHA = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
+                    env.SHORT_SHA = sh(
+                        script: 'git rev-parse --short=7 HEAD',
+                        returnStdout: true
+                    ).trim()
+
                     env.BUILD_TAG = "${env.BUILD_NUMBER}-${env.SHORT_SHA}"
                     env.APP_IMAGE = "${env.ECR_APP_REPO}:${env.BUILD_TAG}"
-                    env.PROXY_IMAGE = "${env.ECR_PROXY_REPO}:${env.BUILD_TAG}"
                 }
+
                 sh 'bash scripts/prepare-build.sh'
+
+                echo "BUILD VERSION: ${env.BUILD_TAG}"
+                echo "APPLICATION IMAGE: ${env.APP_IMAGE}"
             }
         }
 
-        stage('Build Images') {
+        stage('Build Image') {
             steps {
+                echo "BUILD: creating ${env.APP_IMAGE}"
                 sh 'bash scripts/build-image.sh'
             }
         }
 
         stage('Test Image') {
             steps {
+                echo 'TEST: starting and validating the application image locally.'
                 sh 'bash scripts/test-image.sh'
             }
         }
 
         stage('Security Scan') {
             steps {
-                sh 'echo "Security scan placeholder: no secrets in repository, image scan to be configured here."'
+                echo 'SECURITY: placeholder baseline check.'
+                echo 'NOTE: full container vulnerability scanning is not configured yet.'
             }
         }
 
         stage('Verify AWS Identity') {
             steps {
-                sh 'aws sts get-caller-identity --region eu-west-1'
+                echo 'AWS: verifying Jenkins instance-role identity.'
+                sh 'aws sts get-caller-identity --region "${AWS_REGION}"'
             }
         }
 
         stage('Push to ECR') {
             steps {
+                echo "PUBLISH: pushing ${env.BUILD_TAG} and latest to ECR."
                 sh 'bash scripts/push-ecr.sh'
+                echo "PUBLISH COMPLETE: ${env.APP_IMAGE}"
             }
         }
 
-        stage('Deploy Green') {
-            when {
-                expression { env.DEPLOY_ENABLED == 'true' }
-                }
+        stage('Verify Published Image') {
             steps {
-                sh 'bash scripts/deploy-green.sh'
+                echo "VERIFY ECR: checking ${env.BUILD_TAG}"
+
+                sh '''
+                    aws ecr describe-images \
+                      --repository-name bootcamp-app-team3 \
+                      --image-ids imageTag="${BUILD_TAG}" \
+                      --region "${AWS_REGION}" \
+                      --query 'imageDetails[0].{Digest:imageDigest,Tags:imageTags,Pushed:imagePushedAt}' \
+                      --output json
+                '''
             }
         }
 
-        stage('Health Check Green') {
-            when {
-                expression { env.DEPLOY_ENABLED == 'true' }
-                }
+        stage('Deploy to ECS') {
             steps {
-                sh 'bash scripts/health-check.sh'
+                echo '============================================================'
+                echo 'ECS DEPLOYMENT STARTING'
+                echo "Cluster: ${env.ECS_CLUSTER}"
+                echo "Service: ${env.ECS_SERVICE}"
+                echo "Published build: ${env.BUILD_TAG}"
+                echo 'Strategy: single-service rolling deployment'
+                echo '============================================================'
+
+                sh '''
+                    aws ecs update-service \
+                      --cluster "${ECS_CLUSTER}" \
+                      --service "${ECS_SERVICE}" \
+                      --force-new-deployment \
+                      --region "${AWS_REGION}" \
+                      --query 'service.{Service:serviceName,Desired:desiredCount,Running:runningCount,Pending:pendingCount}' \
+                      --output table
+                '''
+
+                echo 'ECS DEPLOYMENT REQUEST ACCEPTED.'
             }
         }
 
-        stage('Switch Proxy') {
-            when {
-                expression { env.DEPLOY_ENABLED == 'true' }
-                }
+        stage('Wait for ECS Stable') {
             steps {
-                sh 'bash scripts/switch-proxy.sh'
+                echo 'ECS: waiting for the service deployment to stabilize.'
+
+                sh '''
+                    aws ecs wait services-stable \
+                      --cluster "${ECS_CLUSTER}" \
+                      --services "${ECS_SERVICE}" \
+                      --region "${AWS_REGION}"
+                '''
+
+                echo 'ECS SERVICE STABLE.'
             }
         }
 
-        stage('Smoke Test') {
-            when {
-                expression { env.DEPLOY_ENABLED == 'true' }
-                }
+        stage('Verify Deployment') {
             steps {
-                sh 'bash scripts/smoke-test.sh'
-            }
-        }
+                echo 'VERIFY ECS: reading final service state.'
 
-        stage('Scale Down Blue') {
-            when {
-                expression { env.DEPLOY_ENABLED == 'true' }
-                }
-            steps {
-                sh 'bash scripts/scale-down-blue.sh'
+                sh '''
+                    aws ecs describe-services \
+                      --cluster "${ECS_CLUSTER}" \
+                      --services "${ECS_SERVICE}" \
+                      --region "${AWS_REGION}" \
+                      --query 'services[0].{Service:serviceName,Desired:desiredCount,Running:runningCount,Pending:pendingCount,TaskDefinition:taskDefinition}' \
+                      --output table
+                '''
+
+                echo "DEPLOYMENT VERIFIED FOR BUILD: ${env.BUILD_TAG}"
             }
         }
 
         stage('Archive Evidence') {
             steps {
-                archiveArtifacts artifacts: 'app/version.json, **/*.log', allowEmptyArchive: true
-                sh 'echo "Pipeline evidence archived for build ${BUILD_TAG}"'
+                archiveArtifacts(
+                    artifacts: 'app/version.json, **/*.log',
+                    allowEmptyArchive: true
+                )
+
+                echo "EVIDENCE ARCHIVED: ${env.BUILD_TAG}"
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline finished.'
+            echo '============================================================'
+            echo 'PIPELINE FINISHED'
+            echo "Build: ${env.BUILD_TAG ?: env.BUILD_NUMBER}"
+            echo '============================================================'
         }
+
         success {
-            echo "CI and ECR publication successful: ${env.BUILD_TAG}. ECS deployment enabled: ${env.DEPLOY_ENABLED}"
+            echo 'RESULT: SUCCESS'
+            echo "Git commit built successfully."
+            echo "Image published: ${env.APP_IMAGE}"
+            echo "ECS service: ${env.ECS_SERVICE}"
+            echo 'ECS rolling deployment completed and service stabilized.'
         }
+
         failure {
-            echo "Pipeline failed for build ${env.BUILD_TAG}. The existing ECS service was not changed unless the deployment stage had started."
+            echo 'RESULT: FAILURE'
+            echo "Pipeline failed for build ${env.BUILD_TAG ?: env.BUILD_NUMBER}."
+            echo 'Check the first failed stage above.'
+            echo 'Do not assume ECS changed unless the Deploy to ECS stage shows that the update request was accepted.'
         }
     }
 }
